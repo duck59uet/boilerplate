@@ -1,23 +1,33 @@
 {
   "compilerOptions": {
+    "rootDir": "src",
     "module": "commonjs",
-    "declaration": true,
+    "declaration": false,
+    "noImplicitAny": false,
     "removeComments": true,
+    "noLib": false,
+    "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2017",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "target": "ES2022",
     "sourceMap": true,
     "outDir": "./dist",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "baseUrl": "./",
-    "paths": {
-      "@app/*": ["src/app/*"],
-      "@src/*": ["src/*"]
-    },
+    "baseUrl": "./src",
     "incremental": true,
+    "strictNullChecks": true,
+    "skipLibCheck": true,
     "noUnusedParameters": true,
-    "importHelpers": true
+    "noUnusedLocals": true,
+    "strict": true
   },
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

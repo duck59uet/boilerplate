@@ -1,30 +1,30 @@
-FROM node:12.13-alpine As development
+FROM node:lts AS dist
+COPY package.json yarn.lock ./
 
-ENV NODE_ENV=development
+RUN yarn install
+
+COPY . ./
+
+RUN yarn build:prod
+
+FROM node:lts AS node_modules
+COPY package.json yarn.lock ./
+
+RUN yarn install --prod
+
+FROM node:lts
+
+ARG PORT=3000
+
+RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY --from=dist dist /usr/src/app/dist
+COPY --from=node_modules node_modules /usr/src/app/node_modules
 
-RUN npm install
+COPY . /usr/src/app
 
-COPY . .
+EXPOSE $PORT
 
-RUN npm run build
-
-FROM node:12.13-alpine as production
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN npm install --only=production
-
-COPY . .
-
-COPY --from=development /usr/src/app/dist ./dist
-
-CMD ["node", "dist/main"]
+CMD [ "yarn", "start:prod" ]
