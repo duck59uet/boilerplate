@@ -4,21 +4,12 @@ import { AxiosError } from 'axios';
 import { catchError, firstValueFrom, map } from 'rxjs';
 import { CustomError } from '../../common/custom-error';
 import { ErrorMap } from '../../common/error.map';
-import { CommonUtil } from '../../utils/common.util';
-import { ChainInfo } from '../../utils/validations';
 
 @Injectable()
 export class CommonService {
   private readonly logger = new Logger(CommonService.name);
 
   constructor(private readonly httpService: HttpService) {}
-
-  public async readConfigurationFile(): Promise<ChainInfo[]> {
-    const configuration = await CommonUtil.jsonReader<ChainInfo[]>(
-      './chains.json',
-    );
-    return configuration;
-  }
 
   public async requestPost<T>(url: string, body: unknown): Promise<T> {
     const result = await firstValueFrom<T>(

@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, UpdateDateColumn } 
 import { BaseEntityAutoId } from '../../../common/entities';
 import { Exclude } from 'class-transformer';
 
-@Entity({ name: 'user' })
+@Entity({ name: 'users' })
 export class User extends BaseEntityAutoId {
   @Column({ unique: true, nullable: false })
   wallet: string;

@@ -26,6 +26,7 @@ export class UserController {
       schema: {},
     },
   })
+  
   async getUserByAddress(@Param() param: GetUserPathParamDto) {
     this.logger.log('========== Get user by address ==========');
     return this.userService.getUserByAddress(param);

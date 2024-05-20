@@ -8,7 +8,6 @@ import { toBech32 } from '@cosmjs/encoding';
 import { PathLike } from 'node:fs';
 import { FileHandle, readFile } from 'node:fs/promises';
 
-import { EthermintHelper } from '../chains/ethermint/ethermint.helper';
 
 export class CommonUtil {
   /**
@@ -39,31 +38,6 @@ export class CommonUtil {
       // ignore
     }
     return undefined;
-  }
-
-  /**
-   * Calculate address from public key
-   * @param pubkey public key
-   * @returns address string
-   */
-  public static pubkeyToAddress(pubkey: Pubkey, prefix: string): string {
-    if (prefix === 'evmos' || prefix === 'canto') {
-      const ethermintHelper = new EthermintHelper();
-      const pubkeyAmino =
-        ethermintHelper.encodeAminoPubkeySupportEthermint(pubkey);
-      const rawAddress = sha256(pubkeyAmino).slice(0, 20);
-      const address = toBech32(prefix, rawAddress);
-      return address;
-    }
-
-    /**
-     * Another way to get bech32 address:
-     * const pubkeyData = encodeAminoPubkey(pubkey);
-     * const rawAddress = sha256(pubkeyData).slice(0, 20);
-     * toBech32(prefix, rawAddress);
-     */
-
-    return pubkeyToAddress(pubkey, prefix);
   }
 
   /**

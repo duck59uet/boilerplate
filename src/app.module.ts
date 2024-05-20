@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { JwtStrategy } from './modules/auth/jwt.strategy';
 import { CustomConfigService } from './shared/services/custom-config.service';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { CustomConfigService } from './shared/services/custom-config.service';
     ScheduleModule.forRoot(),
     AuthModule,
     UserModule,
+    OrderModule,
   ],
   providers: [JwtStrategy],
 })
