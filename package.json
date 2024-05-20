@@ -1,10 +1,10 @@
 {
-  "name": "pumpfund",
-  "version": "0.7.0",
-  "description": "Pumpfun Backend API",
+  "name": "pumphub",
+  "version": "0.0.1",
+  "description": "Pumphub Backend API",
   "author": {
-    "name": "Pumpfun",
-    "email": "pumpfun@pumpfun.io"
+    "name": "Pumphub",
+    "email": "pumphub@pumphub.io"
   },
   "private": true,
   "license": "MIT",
@@ -31,13 +31,6 @@
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^1.14.0",
-    "@cosmjs/amino": "^0.31.1",
-    "@cosmjs/cosmwasm-stargate": "^0.31.1",
-    "@cosmjs/crypto": "^0.31.1",
-    "@cosmjs/encoding": "^0.31.1",
-    "@cosmjs/math": "^0.31.1",
-    "@cosmjs/proto-signing": "^0.31.1",
-    "@cosmjs/stargate": "0.31.1",
     "@golevelup/ts-jest": "^0.3.5",
     "@nestjs/axios": "0.1.0",
     "@nestjs/bull": "^10.0.1",
@@ -114,7 +107,7 @@
     "ts-jest": "^29.0.0",
     "ts-node": "^10.0.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "4.3.5"
+    "typescript": "5.4.5"
   },
   "jest": {
     "moduleFileExtensions": [
