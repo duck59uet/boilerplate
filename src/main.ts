@@ -1,93 +1,45 @@
-import {
-  ClassSerializerInterceptor,
-  HttpStatus,
-  UnprocessableEntityException,
-  ValidationPipe,
-} from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
-import { Transport } from '@nestjs/microservices';
-import {
-  ExpressAdapter,
-  type NestExpressApplication,
-} from '@nestjs/platform-express';
-import compression from 'compression';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import { initializeTransactionalContext } from 'typeorm-transactional';
-
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { middleware as expressCtx } from 'express-ctx';
+import bodyParser from 'body-parser';
+import * as swaggerStats from 'swagger-stats';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './filters/bad-request.filter';
-import { QueryFailedFilter } from './filters/query-failed.filter';
-import { setupSwagger } from './setup-swagger';
-import { ApiConfigService } from './shared/services/api-config.service';
 import { SharedModule } from './shared/shared.module';
 
-export async function bootstrap(): Promise<NestExpressApplication> {
-  initializeTransactionalContext();
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-    new ExpressAdapter(),
-    { cors: true },
-  );
-  app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
-  app.use(helmet());
-  // app.setGlobalPrefix('/api'); use api as global prefix if you don't have subdomain
-  app.use(compression());
-  app.use(morgan('combined'));
-  app.enableVersioning();
-
-  const reflector = app.get(Reflector);
-
-  app.useGlobalFilters(
-    new HttpExceptionFilter(reflector),
-    new QueryFailedFilter(reflector),
-  );
-
-  app.useGlobalInterceptors(
-    new ClassSerializerInterceptor(reflector),
-  );
-
+// eslint-disable-next-line no-void
+void (async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
-      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      transform: true,
-      dismissDefaultMessages: true,
-      exceptionFactory: (errors) => new UnprocessableEntityException(errors),
+      forbidUnknownValues: false,
     }),
   );
 
-  const configService = app.select(SharedModule).get(ApiConfigService);
+  // enable cors
+  app.enableCors();
+  app.use(expressCtx);
 
-  // only start nats if it is enabled
-  if (configService.natsEnabled) {
-    const natsConfig = configService.natsConfig;
-    app.connectMicroservice({
-      transport: Transport.NATS,
-      options: {
-        url: `nats://${natsConfig.host}:${natsConfig.port}`,
-        queue: 'main_service',
-      },
-    });
+  // increase limit
+  app.use(bodyParser.json({ limit: '20mb' }));
+  app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
 
-    await app.startAllMicroservices();
-  }
+  const configService = app.select(SharedModule).get(ConfigService);
 
-  if (configService.documentationEnabled) {
-    setupSwagger(app);
-  }
+  // setup swagger
+  const config = new DocumentBuilder()
+    .setTitle('Pumpfun API')
+    .setVersion('v1')
+    .addServer('/')
+    .addServer(configService.get<string>('SWAGGER_PATH'))
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
 
-  // Starts listening for shutdown hooks
-  if (!configService.isDevelopment) {
-    app.enableShutdownHooks();
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  app.use(swaggerStats.getMiddleware({ swaggerSpec: document }));
+  SwaggerModule.setup('documentation', app, document);
 
-  const port = configService.appConfig.port;
-  await app.listen(port);
-
-  console.info(`server running on ${await app.getUrl()}`);
-
-  return app;
-}
-
-void bootstrap();
+  await app.listen(3000);
+})();

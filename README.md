@@ -1,93 +1,75 @@
-# Awesome NestJS Boilerplate v10
+# Aura Multisignature Wallet
 
-[![Awesome NestJS](https://img.shields.io/badge/Awesome-NestJS-blue.svg?longCache=true&style=flat-square)](https://github.com/juliandavidmr/awesome-nestjs)
+![GitHub Actions](https://github.com/aura-nw/multisig-api/actions/workflows/ci.yml/badge.svg)
+[![documentation](https://img.shields.io/badge/documentation-docs-brightgreen)](./docs)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/aura-nw/multisig-api/issues)
 
-> This is an ever-evolving, very opinionated architecture and dev environment for new node projects using [NestJS](https://nestjs.com). Questions, feedback, and for now, even bikeshedding are welcome. 😄
+[![codecov](https://img.shields.io/codecov/c/gh/aura-nw/multisig-api/dev?style=flat-square&token=FNWOTPBIRX)](https://codecov.io/gh/aura-nw/multisig-api)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=aura-nw_multisig-api&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=aura-nw_multisig-api)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=aura-nw_multisig-api&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=aura-nw_multisig-api)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=aura-nw_multisig-api&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=aura-nw_multisig-api)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=aura-nw_multisig-api&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=aura-nw_multisig-api)
+
+<!-- [![Maintainability](https://api.codeclimate.com/v1/badges/670351cb6c558dc7d9c2/maintainability)](https://codeclimate.com/github/aura-nw/multisig-api/maintainability) -->
+
+# Overview
+
+Currently, our whole infrasture is constituted by mainly 1 frontend service, 2 backend service.
+
+![image](docs/pics/multisig_architecture.png)
+
+The core backend service received data from frontend(mobile app and web app) via API then saved in MySQL transaction information and sent transaction to Aura Network.
+
+The sync service keep track all transaction has broadcasted by Aura Network. If this app is crashed and restarted, program would get current latest block synced in database for each address and latest block in Aura network, then use REST API (Cosmjs) to get all transaction which not synced yet.
+
+# Multisig-backend
+
+Multisignature backend aims to keep track transactions from frontend to Aura Network.
+
+Transactions can also be sent to the service to allow offchain collecting of signatures or informing the owners about a transaction that is pending to be sent to the blockchain.
+
+When collecting of signatures enough to threshold, transactions able to sent to Aura Network.
+
+## Design architecture
+
+Click [here](docs/README.md) to see the design architecture.
 
 ## Getting started
 
+### 1. Clone the repository.
+
 ```bash
-# 1. Clone the repository or click on "Use this template" button.
-npx degit NarHakobyan/awesome-nest-boilerplate my-nest-app
+git clone https://github.com/aura-nw/multisig-api
+```
 
-# 2. Enter your newly-cloned folder.
-cd my-nest-app
+### 2. Enter your newly-cloned folder.
 
-# 3. Create Environment variables file.
+```bash
+cd multisig-api
+```
+
+### 3. Create Environment variables file.
+
+```bash
 cp .env.example .env
-
-# 3. Install dependencies. (Make sure yarn is installed: https://yarnpkg.com/lang/en/docs/install)
-yarn
 ```
 
-## Checklist
-
-When you use this template, try follow the checklist to update your info properly
-
-- [ ] Change the author name in `LICENSE`
-- [ ] Change configurations in `.env`
-- [ ] Remove the `.github` folder which contains the funding info
-- [ ] Clean up the README.md file
-
-And, enjoy :)
-
-
-### Development
-```bash
-# 4. Run development server and open http://localhost:3000
-yarn start:dev
-
-# 5. Read the documentation linked below for "Setup and development".
-```
-
-### Build
-
-To build the App, run
+### 4. Install dependencies. (Make sure nodejs is installed: https://nodejs.org/en/)
 
 ```bash
-yarn build:prod
+npm i
 ```
 
-And you will see the generated file in `dist` that ready to be served.
+## Setup for development
 
-## Features
+Multisignature backend use MySQL and Nodejs. Make sure installed them.
 
-<dl>
-  <!-- <dt><b>Quick scaffolding</b></dt>
-  <dd>Create modules, services, controller - right from the CLI!</dd> -->
+## Running the app
 
-  <dt><b>Instant feedback</b></dt>
-  <dd>Enjoy the best DX (Developer eXperience) and code your app at the speed of thought! Your saved changes are reflected instantaneously.</dd>
+```bash
+# development
+$ npm run start
 
-  <dt><b>JWT Authentication</b></dt>
-  <dd>Installed and configured JWT authentication.</dd>
-
-  <dt><b>Next generation Typescript</b></dt>
-  <dd>Always up to date typescript version.</dd>
-
-  <dt><b>Industry-standard routing</b></dt>
-  <dd>It's natural to want to add pages (e.g. /about`) to your application, and routing makes this possible.</dd>
-
-  <dt><b>Environment Configuration</b></dt>
-  <dd>development, staging and production environment configurations</dd>
-
-  <dt><b>Swagger Api Documentation</b></dt>
-  <dd>Already integrated API documentation. To see all available endpoints visit http://localhost:3000/documentation</dd>
-
-  <dt><b>Linter</b></dt>
-  <dd>eslint + prettier = ❤️</dd>
-</dl>
-
-## Documentation
-
-This project includes a `docs` folder with more details on:
-
-1.  [Setup and development](https://narhakobyan.github.io/awesome-nest-boilerplate/docs/development.html#first-time-setup)
-1.  [Architecture](https://narhakobyan.github.io/awesome-nest-boilerplate/docs/architecture.html)
-1.  [Naming Cheatsheet](https://narhakobyan.github.io/awesome-nest-boilerplate/docs/naming-cheatsheet.html)
-
-## Community
-
-For help, discussion about best practices, or any other conversation that would benefit from being searchable:
-
-[Discuss Awesome NestJS Boilerplate on GitHub](https://github.com/NarHakobyan/awesome-nest-boilerplate/discussions)
+# watch mode
+$ npm run start:dev
+```

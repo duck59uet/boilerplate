@@ -1,43 +1,39 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-
-import { type RoleType, TokenType } from '../../constants';
-import { ApiConfigService } from '../../shared/services/api-config.service';
-import { type UserEntity } from '../user/user.entity';
-import { UserService } from '../user/user.service';
+import { PassportStrategy } from '@nestjs/passport';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ValidatePayloadDto } from './dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    configService: ApiConfigService,
-    private userService: UserService,
-  ) {
+  public readonly logger = new Logger(JwtStrategy.name);
+
+  constructor(private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.authConfig.publicKey,
+      ignoreExpiration: false,
+      secretOrKey: configService.get<string>('JWT_SECRET'),
     });
   }
 
-  async validate(args: {
-    userId: Uuid;
-    role: RoleType;
-    type: TokenType;
-  }): Promise<UserEntity> {
-    if (args.type !== TokenType.ACCESS_TOKEN) {
-      throw new UnauthorizedException();
+  validate(payload: ValidatePayloadDto) {
+    try {
+      const { data } = payload;
+      const timestampExpire = new Date(
+        Number(data) +
+          1000 *
+            Number(
+              this.configService.get<string>('JWT_EXPIRATION').match(/\d+/g)[0],
+            ),
+      );
+      const currentTimestamp = new Date();
+      if (currentTimestamp > timestampExpire) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+      return payload;
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-
-    const user = await this.userService.findOne({
-      // FIXME: issue with type casts
-      id: args.userId as never,
-    //   role: args.role,
-    });
-
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-
-    return user;
   }
 }

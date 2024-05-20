@@ -1,111 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { type FindOptionsWhere, Repository } from 'typeorm';
-
-import { type PageDto } from '../../common/dto/page.dto';
-import { UserNotFoundException } from '../../exceptions';
-import { CreateSettingsCommand } from './commands/create-settings.command';
-import { CreateSettingsDto } from './dtos/create-settings.dto';
-import { type UserDto } from './dtos/user.dto';
-import { type UsersPageOptionsDto } from './dtos/users-page-options.dto';
-import { UserEntity } from './user.entity';
-import { type UserSettingsEntity } from './user-settings.entity';
+import { Injectable, Logger } from '@nestjs/common';
+import { ResponseDto } from '../../common/dtos/response.dto';
+import { ErrorMap } from '../../common/error.map';
+import { UserRepository } from './user.repository';
+import { GetUserPathParamDto } from './dto/request/get-user.req';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-    private commandBus: CommandBus,
-  ) {}
+  private readonly logger = new Logger(UserService.name);
 
-  /**
-   * Find single user
-   */
-  findOne(findData: FindOptionsWhere<UserEntity>): Promise<UserEntity | null> {
-    return this.userRepository.findOneBy(findData);
+  constructor(private userRepo: UserRepository) {
+    this.logger.log('============== Constructor User Service ==============');
   }
 
-//   async findByUsernameOrEmail(
-//     options: Partial<{ username: string; email: string }>,
-//   ): Promise<UserEntity | null> {
-    // const queryBuilder = this.userRepository
-    //   .createQueryBuilder('user')
-    //   .leftJoinAndSelect<UserEntity, 'user'>('user.settings', 'settings');
-
-    // if (options.email) {
-    //   queryBuilder.orWhere('user.email = :email', {
-    //     email: options.email,
-    //   });
-    // }
-
-    // if (options.username) {
-    //   queryBuilder.orWhere('user.username = :username', {
-    //     username: options.username,
-    //   });
-    // }
-
-    // return queryBuilder.getOne();
-//   }
-
-//   @Transactional()
-//   async createUser(
-//     userRegisterDto: UserRegisterDto,
-//     file?: IFile,
-//   ): Promise<UserEntity> {
-//     const user = this.userRepository.create(userRegisterDto);
-
-//     if (file && !this.validatorService.isImage(file.mimetype)) {
-//       throw new FileNotImageException();
-//     }
-
-//     if (file) {
-//       user.avatar = await this.awsS3Service.uploadImage(file);
-//     }
-
-//     await this.userRepository.save(user);
-
-//     user.settings = await this.createSettings(
-//       user.id,
-//       plainToClass(CreateSettingsDto, {
-//         isEmailVerified: false,
-//         isPhoneVerified: false,
-//       }),
-//     );
-
-//     return user;
-//   }
-
-  async getUsers(
-    pageOptionsDto: UsersPageOptionsDto,
-  ): Promise<PageDto<UserDto>> {
-    const queryBuilder = this.userRepository.createQueryBuilder('user');
-    const [items, pageMetaDto] = await queryBuilder.paginate(pageOptionsDto);
-
-    return items.toPageDto(pageMetaDto);
-  }
-
-  async getUser(userId: Uuid): Promise<UserDto> {
-    const queryBuilder = this.userRepository.createQueryBuilder('user');
-
-    queryBuilder.where('user.id = :userId', { userId });
-
-    const userEntity = await queryBuilder.getOne();
-
-    if (!userEntity) {
-      throw new UserNotFoundException();
+  async getUserByAddress(
+    param: GetUserPathParamDto,
+  ): Promise<ResponseDto<User>> {
+    const { address } = param;
+    try {
+      const user = await this.userRepo.getUserByAddress(address);
+      return ResponseDto.response(ErrorMap.SUCCESSFUL, user);
+    } catch (error) {
+      return ResponseDto.responseError(UserService.name, error);
     }
-
-    return userEntity.toDto();
-  }
-
-  async createSettings(
-    userId: Uuid,
-    createSettingsDto: CreateSettingsDto,
-  ): Promise<UserSettingsEntity> {
-    return this.commandBus.execute<CreateSettingsCommand, UserSettingsEntity>(
-      new CreateSettingsCommand(userId, createSettingsDto),
-    );
   }
 }

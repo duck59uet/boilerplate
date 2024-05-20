@@ -1,68 +1,33 @@
+import { Controller, Logger, Param } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import {
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Query,
-  ValidationPipe,
-} from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-
-import { PageDto } from '../../common/dto/page.dto';
-import { RoleType } from '../../constants';
-import { ApiPageOkResponse, Auth, AuthUser, UUIDParam } from '../../decorators';
-import { UseLanguageInterceptor } from '../../interceptors/language-interceptor.service';
-import { UserDto } from './dtos/user.dto';
-import { UsersPageOptionsDto } from './dtos/users-page-options.dto';
-import { UserEntity } from './user.entity';
+  CONTROLLER_CONSTANTS,
+  URL_CONSTANTS,
+} from '../../common/constants/api.constant';
+import { CommonGet } from '../../decorators/common.decorator';
+import { ResponseDto } from '../../common/dtos/response.dto';
+import { GetUserPathParamDto } from './dto/request/get-user.req';
 import { UserService } from './user.service';
 
-@Controller('users')
-@ApiTags('users')
+@Controller(CONTROLLER_CONSTANTS.USER)
+@ApiTags(CONTROLLER_CONSTANTS.USER)
 export class UserController {
-  constructor(
-    private userService: UserService,
-  ) {}
+  public readonly logger = new Logger(UserController.name);
 
-  @Get('admin')
-  @Auth([RoleType.USER])
-  @HttpCode(HttpStatus.OK)
-  @UseLanguageInterceptor()
-  async admin(@AuthUser() user: UserEntity) {
-    // const translation = await this.translationService.translate(
-    //   'admin.keywords.admin',
-    // );
+  constructor(private userService: UserService) {}
 
-    // return {
-    //   text: `${translation} ${user.firstName}`,
-    // };
-
-    return user;
-  }
-
-  @Get()
-  @Auth([RoleType.USER])
-  @HttpCode(HttpStatus.OK)
-  @ApiPageOkResponse({
-    description: 'Get users list',
-    type: PageDto,
+  @CommonGet({
+    url: URL_CONSTANTS.GET_USER_BY_ADDRESS,
+    summary: 'Get user by address',
+    apiOkResponseOptions: {
+      status: 200,
+      type: ResponseDto,
+      description: 'User detail',
+      schema: {},
+    },
   })
-  getUsers(
-    @Query(new ValidationPipe({ transform: true }))
-    pageOptionsDto: UsersPageOptionsDto,
-  ): Promise<PageDto<UserDto>> {
-    return this.userService.getUsers(pageOptionsDto);
-  }
-
-  @Get(':id')
-  @Auth([RoleType.USER])
-  @HttpCode(HttpStatus.OK)
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Get users list',
-    type: UserDto,
-  })
-  getUser(@UUIDParam('id') userId: Uuid): Promise<UserDto> {
-    return this.userService.getUser(userId);
+  async getUserByAddress(@Param() param: GetUserPathParamDto) {
+    this.logger.log('========== Get user by address ==========');
+    return this.userService.getUserByAddress(param);
   }
 }

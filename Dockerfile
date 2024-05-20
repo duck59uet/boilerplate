@@ -1,30 +1,30 @@
-FROM node:lts AS dist
+FROM node:lts-alpine AS build-stage
+WORKDIR /usr/src/app/
 COPY package.json yarn.lock ./
 
-RUN yarn install
+RUN yarn install --ignore-scripts
 
-COPY . ./
+COPY ./src ./src
+COPY ./*.json ./
 
 RUN yarn build:prod
 
-FROM node:lts AS node_modules
+FROM node:lts-alpine AS install-dependencies-stage
+WORKDIR /usr/src/app/
 COPY package.json yarn.lock ./
 
-RUN yarn install --prod
+RUN yarn install --prod --ignore-scripts
 
-FROM node:lts
-
+# Run-time stage
+FROM node:lts-alpine AS run-stage
+USER node
 ARG PORT=3000
 
-RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app/
 
-WORKDIR /usr/src/app
-
-COPY --from=dist dist /usr/src/app/dist
-COPY --from=node_modules node_modules /usr/src/app/node_modules
-
-COPY . /usr/src/app
+COPY --from=build-stage /usr/src/app/dist ./dist
+COPY --from=install-dependencies-stage /usr/src/app/node_modules ./node_modules
+COPY *.json /usr/src/app/
 
 EXPOSE $PORT
-
 CMD [ "yarn", "start:prod" ]

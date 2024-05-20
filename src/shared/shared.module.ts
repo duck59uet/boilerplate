@@ -1,23 +1,19 @@
-import { Global, Module, type Provider } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { HttpModule } from '@nestjs/axios';
+import { Module, Global } from '@nestjs/common';
+import {
+  CommonService,
+  CustomConfigService,
+} from './services';
 
-import { ApiConfigService } from './services/api-config.service';
-import { AwsS3Service } from './services/aws-s3.service';
-import { GeneratorService } from './services/generator.service';
-import { ValidatorService } from './services/validator.service';
-
-const providers: Provider[] = [
-  ApiConfigService,
-  ValidatorService,
-  AwsS3Service,
-  GeneratorService,
-//   TranslationService,
+const providers = [
+  CustomConfigService,
+  CommonService,
 ];
 
 @Global()
 @Module({
-  providers,
-  imports: [CqrsModule],
-  exports: [...providers, CqrsModule],
+  imports: [HttpModule],
+  providers: [...providers],
+  exports: [...providers],
 })
 export class SharedModule {}

@@ -1,66 +1,30 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Version,
-} from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Param, Controller, Get, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CONTROLLER_CONSTANTS } from '../../common/constants/api.constant';
+import { AuthService } from './auth.service';
+import { Web3LoginDTO } from './dto/web3-login.dto';
 
-import { RoleType } from '../../constants';
-import { Auth, AuthUser } from '../../decorators';
-import { UserDto } from '../user/dtos/user.dto';
-import { UserEntity } from '../user/user.entity';
-
-@Controller('auth')
-@ApiTags('auth')
+@Controller(CONTROLLER_CONSTANTS.AUTH)
+@ApiTags(CONTROLLER_CONSTANTS.AUTH)
 export class AuthController {
-  constructor() {}
+  constructor(private readonly authService: AuthService) {}
 
-//   @Post('login')
-//   @HttpCode(HttpStatus.OK)
-//   @ApiOkResponse({
-//     type: LoginPayloadDto,
-//     description: 'User info with access token',
-//   })
-//   async userLogin(
-//     @Body() userLoginDto: UserLoginDto,
-//   ): Promise<LoginPayloadDto> {
-//     const userEntity = await this.authService.validateUser(userLoginDto);
-
-//     const token = await this.authService.createAccessToken({
-//       userId: userEntity.id,
-//     //   role: userEntity.role,
-//       role: RoleType.USER
-//     });
-
-//     return new LoginPayloadDto(userEntity.toDto(), token);
-//   }
-
-//   @Post('register')
-//   @HttpCode(HttpStatus.OK)
-//   @ApiOkResponse({ type: UserDto, description: 'Successfully Registered' })
-//   @ApiFile({ name: 'avatar' })
-//   async userRegister(
-//     @Body() userRegisterDto: UserRegisterDto,
-//     @UploadedFile() file?: IFile,
-//   ): Promise<UserDto> {
-    // const createdUser = await this.userService.createUser(
-    //   userRegisterDto,
-    //   file,
-    // );
-
-    // return createdUser.toDto({
-    //   isActive: true,
-    // });
-//   }
-
-  @Version('1')
-  @Get('me')
+  @Get('nonce/:addr')
+  @ApiOperation({
+    summary: 'Get nonce',
+  })
   @HttpCode(HttpStatus.OK)
-  @Auth([RoleType.USER, RoleType.ADMIN])
-  @ApiOkResponse({ type: UserDto, description: 'current user info' })
-  getCurrentUser(@AuthUser() user: UserEntity): UserDto {
-    return user.toDto();
+  async getNonce(@Param('addr') addr: string): Promise<{ nonce: number }> {
+    return { nonce: await this.authService.userGetNonce(addr.trim()) };
+  }
+
+  @Post('user/login')
+  @ApiOperation({
+    summary: 'Send signature to create access token',
+  })
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() loginDTO: Web3LoginDTO): Promise<{ token: string }> {
+    const token = await this.authService.userLogIn(loginDTO);
+    return { token };
   }
 }
