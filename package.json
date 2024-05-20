@@ -1,10 +1,10 @@
 {
-  "name": "pyxis-safe-api",
+  "name": "pumpfund",
   "version": "0.7.0",
-  "description": "Pyxis Safe Backend API",
+  "description": "Pumpfun Backend API",
   "author": {
-    "name": "Aura Network",
-    "email": "admin@aura.network"
+    "name": "Pumpfun",
+    "email": "pumpfun@pumpfun.io"
   },
   "private": true,
   "license": "MIT",
