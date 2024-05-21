@@ -8,3 +8,8 @@ export enum OrderType {
   BUY = 'Buy',
   SELL = 'Sell',
 }
+
+export enum CollectionType {
+  DRAFT = 1,
+  PUBLISH = 2,
+}
