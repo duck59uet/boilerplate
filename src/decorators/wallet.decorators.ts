@@ -17,7 +17,7 @@ export const signMessage =
         new HexString(privateKeyVerifier).toString(),
       );
 
-      const signature = await edPk.sign(stringToHex(message)).toString();
+      const signature = await edPk.sign(stringToHex(message)).toUint8Array();
       return {
         signature,
       };

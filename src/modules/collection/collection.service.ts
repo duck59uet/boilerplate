@@ -23,7 +23,7 @@ export class CollectionService {
     try {
 
       const { name, symbol, logo_uri, project_uri } = req;
-      const data = signMessage(this.logger)(this.privateKeyManager, name, symbol, logo_uri, project_uri);
+      const data = await signMessage(this.logger)(this.privateKeyManager, name, symbol, logo_uri, project_uri);
 
       return ResponseDto.response(ErrorMap.SUCCESSFUL, data);
     } catch (error) {
