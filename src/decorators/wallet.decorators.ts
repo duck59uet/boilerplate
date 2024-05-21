@@ -9,10 +9,10 @@ export const signMessage =
     symbol: string,
     logo_uri: string,
     project_uri: string,
-    nonce: string,
+    // nonce: string,
   ) => {
     try {
-      const message = `APTOS\\nmessage: ${name}${symbol}${logo_uri}${project_uri}\\nnonce: ${nonce}`;
+      const message = `APTOS\\nmessage: ${name}${symbol}${logo_uri}${project_uri}\\nnonce: 0`;
       const edPk = new Ed25519PrivateKey(
         new HexString(privateKeyVerifier).toString(),
       );
