@@ -17,7 +17,9 @@ export class OrderService {
   ): Promise<ResponseDto<any>> {
     const { address } = param;
     try {
-      return ResponseDto.response(ErrorMap.SUCCESSFUL);
+      const data = await this.orderRepo.drawChart(address);
+
+      return ResponseDto.response(ErrorMap.SUCCESSFUL, data);
     } catch (error) {
       return ResponseDto.responseError(OrderService.name, error);
     }

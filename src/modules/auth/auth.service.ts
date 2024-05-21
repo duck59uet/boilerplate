@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { RoleType } from '../../constants';
 import { Web3LoginDTO } from './dto/web3-login.dto';
-import { isValidUserSignature } from '../../decorators/wallet.decorators';
+import { isValidUserSignature, standardizeAddress } from '../../decorators/wallet.decorators';
 import { UserRepository } from '../user/user.repository';
 
 @Injectable()
@@ -16,9 +16,11 @@ export class AuthService {
   async userGetNonce(addr: string): Promise<number> {
     const nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) + 1;
 
-    let user = await this.userRepo.getUserByAddress(addr.toString());
+    const formatAddr = standardizeAddress(addr);
+
+    let user = await this.userRepo.getUserByAddress(formatAddr);
     if (user === null) {
-      user = await this.userRepo.initUser(addr.toString(), nonce);
+      user = await this.userRepo.initUser(formatAddr, nonce);
     }
 
     // update user's nonce
@@ -27,7 +29,9 @@ export class AuthService {
   }
 
   async userLogIn(loginDTO: Web3LoginDTO): Promise<string> {
-    const { addr, massage, signature, publicKey } = loginDTO;
+    let { addr, massage, signature, publicKey } = loginDTO;
+
+    addr = standardizeAddress(addr);
 
     if (!isValidUserSignature(addr, massage, signature, publicKey)) {
       throw new UnauthorizedException('Invalid Signature');

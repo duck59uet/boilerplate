@@ -44,7 +44,7 @@ export class OrderRepository {
             FROM "orders" WINDOW w AS (PARTITION BY collection,
                                                     TO_CHAR("createdAt", 'YYMMDDHH24MI')
                                        ORDER BY "createdAt" DESC)) AS inr
-         WHERE the_rank = 1 AND collection ilike ?
+         WHERE the_rank = 1 AND collection ilike $1
          ORDER BY 1,
                   2;
           `,
