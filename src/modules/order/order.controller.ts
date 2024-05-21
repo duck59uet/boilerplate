@@ -1,4 +1,4 @@
-import { Controller, Logger, Param } from '@nestjs/common';
+import { Controller, Logger, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
   CONTROLLER_CONSTANTS,
@@ -7,7 +7,7 @@ import {
 import { CommonGet } from '../../decorators/common.decorator';
 import { ResponseDto } from '../../common/dtos/response.dto';
 import { OrderService } from './order.service';
-import { DrawChartParamDto } from './dto/request/draw-chart.req';
+import { DrawChartParamDto, DrawChartQueryDto } from './dto/request/draw-chart.req';
 
 @Controller(CONTROLLER_CONSTANTS.ORDER)
 @ApiTags(CONTROLLER_CONSTANTS.ORDER)
@@ -26,8 +26,8 @@ export class OrderController {
       schema: {},
     },
   })
-  async getChart(@Param() param: DrawChartParamDto) {
+  async getChart(@Param() param: DrawChartParamDto, @Query() query: DrawChartQueryDto) {
     this.logger.log('========== Get user by address ==========');
-    return this.orderService.drawChart(param);
+    return this.orderService.drawChart(param, query);
   }
 }

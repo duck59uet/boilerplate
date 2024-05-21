@@ -18,38 +18,54 @@ export class OrderRepository {
         );
     }
 
-    async drawChart(address: string) {
+    async drawChart(address: string, type: string) {
         {
-        // query transactions from aura_tx
-        // set direction of transaction
+            // query transactions from aura_tx
+            // set direction of transaction
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const result: unknown[] = await this.repo.query(`
-                SELECT collection,
-                the_minute,
-                OPEN,
-                high,
-                low,
-                CLOSE
-         FROM
-           (SELECT collection ,
-                   TO_CHAR("createdAt", 'YYMMDDHH24MI') AS the_minute ,
-                   MIN(price) OVER w AS low ,
-                                   MAX(price) OVER w AS high ,
-                                                   LAST_VALUE(price) OVER w AS OPEN -- Note the window is in reverse (first value comes last)
-          ,
-                                                                          FIRST_VALUE(price) OVER w AS CLOSE -- Note the window is in reverse (last value comes first)
-          ,
-                                                                                                  RANK() OVER w AS the_rank
-            FROM "orders" WINDOW w AS (PARTITION BY collection,
-                                                    TO_CHAR("createdAt", 'YYMMDDHH24MI')
-                                       ORDER BY "createdAt" DESC)) AS inr
-         WHERE the_rank = 1 AND collection ilike $1
-         ORDER BY 1,
-                  2;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const result: unknown[] = await this.repo.query(`
+        SELECT
+        date, trade_count, low, high, 
+        open_price,
+        close_price
+    FROM
+    (
+        SELECT 
+            date, trade_count, low, high, 
+            trades_open.price  AS open_price,
+            trades_close.price AS close_price,
+    
+            ROW_NUMBER() OVER (PARTITION BY date) AS n
+        FROM
+        (
+            SELECT
+                date_trunc($2, "createdAt") AS date,
+                COUNT(*)                         AS trade_count,
+    
+                min( "createdAt" ) open_timestamp,
+                max( "createdAt" ) close_timestamp,
+    
+                min( "price" ) AS low,
+                max( "price" ) AS high
+            FROM orders
+            WHERE "collection" = $1
+            GROUP BY date_trunc($2, "createdAt")
+        ) tbl
+    
+        JOIN orders trades_open  ON tbl.open_timestamp  = trades_open."createdAt"
+        JOIN orders trades_close ON tbl.close_timestamp = trades_close."createdAt"
+        WHERE 
+        trades_open.collection = $1
+        AND
+        trades_close.collection = $1
+    ) AS tbl_2
+    WHERE n = 1
+    ORDER BY date;    
           `,
                 [
-                    address
+                    address,
+                    type
                 ],
             );
             const txs = plainToInstance(ChartResponseDto, result);
