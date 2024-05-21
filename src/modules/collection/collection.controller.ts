@@ -1,10 +1,10 @@
-import { Body, Controller, Logger, Param } from '@nestjs/common';
+import { Body, Controller, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
   CONTROLLER_CONSTANTS,
   URL_CONSTANTS,
 } from '../../common/constants/api.constant';
-import { CommonAuthPost, CommonGet } from '../../decorators/common.decorator';
+import { CommonPost } from '../../decorators/common.decorator';
 import { ResponseDto } from '../../common/dtos/response.dto';
 import { CollectionService } from './collection.service';
 import { CreateCollectionDto } from './dto/create-collection.request';
@@ -16,7 +16,7 @@ export class CollectionController {
 
   constructor(private collectionService: CollectionService) {}
 
-  @CommonAuthPost({
+  @CommonPost({
     url: URL_CONSTANTS.CREATE_COLLECTION,
     summary: 'Create collection',
     apiOkResponseOptions: {
