@@ -25,7 +25,7 @@ export class CollectionService {
       const { name, symbol, logo_uri, project_uri } = req;
       const data = signMessage(this.logger)(this.privateKeyManager, name, symbol, logo_uri, project_uri);
 
-      return ResponseDto.response(ErrorMap.SUCCESSFUL);
+      return ResponseDto.response(ErrorMap.SUCCESSFUL, data);
     } catch (error) {
       return ResponseDto.responseError(CollectionService.name, error);
     }
