@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntityAutoId } from '../../common/entities';
+import { BaseEntityAutoId } from '../../../common/entities';
 
 
 @Entity({ name: 'system_configs' })

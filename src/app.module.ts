@@ -10,7 +10,8 @@ import { UserModule } from './modules/user/user.module';
 import { JwtStrategy } from './modules/auth/jwt.strategy';
 import { CustomConfigService } from './shared/services/custom-config.service';
 import { OrderModule } from './modules/order/order.module';
-import { SystemConfigModule } from './system_config/system_config.module';
+import { SystemConfigModule } from './modules/system_config/system_config.module';
+import { CollectionModule } from './modules/collection/collection.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { SystemConfigModule } from './system_config/system_config.module';
     UserModule,
     OrderModule,
     SystemConfigModule,
+    CollectionModule,
   ],
   providers: [JwtStrategy],
 })
