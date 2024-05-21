@@ -5,6 +5,8 @@ import { ResponseDto } from '../../common/dtos';
 import { ErrorMap } from '../../common/error.map';
 import { signMessage } from '../../decorators/wallet.decorators';
 import { ConfigService } from '@nestjs/config';
+import { plainToInstance } from 'class-transformer';
+import { SignatureResponseDto } from './response/signArray.response';
 
 @Injectable()
 export class CollectionService {
@@ -23,9 +25,10 @@ export class CollectionService {
     try {
 
       const { name, symbol, logo_uri, project_uri } = req;
-      const data = await signMessage(this.logger)(this.privateKeyManager, name, symbol, logo_uri, project_uri);
+      const data = (await signMessage(this.logger)(this.privateKeyManager, name, symbol, logo_uri, project_uri)).toString();
 
-      return ResponseDto.response(ErrorMap.SUCCESSFUL, data);
+      const signature = plainToInstance(SignatureResponseDto, data);
+      return ResponseDto.response(ErrorMap.SUCCESSFUL, signature);
     } catch (error) {
       return ResponseDto.responseError(CollectionService.name, error);
     }

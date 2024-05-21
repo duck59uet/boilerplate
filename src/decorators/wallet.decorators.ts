@@ -18,9 +18,7 @@ export const signMessage =
       );
 
       const signature = await edPk.sign(stringToHex(message)).toUint8Array();
-      return {
-        signature,
-      };
+      return signature;
     } catch (error) {
       logger.log('error', error);
       return null;
