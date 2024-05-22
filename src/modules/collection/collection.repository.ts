@@ -64,7 +64,7 @@ export class CollectionRepository {
         // set direction of transaction
     
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const result: unknown[] = await this.repo.query(
+        const result: unknown = await this.repo.query(
           `
           SELECT * FROM collections c
           WHERE c.id = '${id}'

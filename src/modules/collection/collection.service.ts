@@ -71,7 +71,7 @@ export class CollectionService {
 
       return ResponseDto.response(
         ErrorMap.SUCCESSFUL,
-        plainToInstance(Collection, response)
+        response[0]
       );
     } catch (error) {
       return ResponseDto.responseError(CollectionService.name, error);
