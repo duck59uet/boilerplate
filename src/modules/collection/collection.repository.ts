@@ -44,6 +44,7 @@ export class CollectionRepository {
         const result: unknown[] = await this.repo.query(
           `
           SELECT * FROM collections c
+          WHERE c.status = ${CollectionType.PUBLISH}
           ORDER BY c."updatedAt" DESC 
           LIMIT $1 OFFSET $2;
           `,

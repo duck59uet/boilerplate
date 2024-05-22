@@ -26,7 +26,7 @@ export class Collection extends BaseEntityAutoId {
   @Column({ nullable: true })
   symbol: string;
 
-  @Column({ nullable: true, name: 'txHash' })
+  @Column({ nullable: true })
   txHash: string;
 
   @Column({ nullable: true })
