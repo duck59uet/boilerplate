@@ -31,5 +31,28 @@ export class CollectionRepository {
 
         await this.repo.save(collection);
     }
-}
 
+    async getAllCollections(
+        pageIndex: number,
+        limit: number,
+      ) {
+        const offset = limit * (pageIndex - 1);
+        // query transactions from aura_tx
+        // set direction of transaction
+    
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const result: unknown[] = await this.repo.query(
+          `
+          SELECT * FROM collections c
+          ORDER BY c."updatedAt" DESC 
+          LIMIT $1 OFFSET $2;
+          `,
+          [
+            limit,
+            offset,
+          ],
+        );
+
+        return result;
+    }
+}

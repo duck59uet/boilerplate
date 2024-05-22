@@ -9,6 +9,7 @@ import { plainToInstance } from 'class-transformer';
 import { SignatureResponseDto } from './response/signArray.response';
 import { aw } from '@aptos-labs/ts-sdk/dist/common/accountAddress-csDQ8Gnp';
 import { CommonUtil } from '../../utils/common.util';
+import { GetAllCollectionRequestDto } from './dto/get-all-collection.req';
 
 @Injectable()
 export class CollectionService {
@@ -36,6 +37,23 @@ export class CollectionService {
 
       const signature = plainToInstance(SignatureResponseDto, data);
       return ResponseDto.response(ErrorMap.SUCCESSFUL, signature);
+    } catch (error) {
+      return ResponseDto.responseError(CollectionService.name, error);
+    }
+  }
+
+  async getCollections(
+    request: GetAllCollectionRequestDto,
+  ): Promise<ResponseDto<any[]>> {
+    const { pageSize, pageIndex } = request;
+
+    try {
+      const response = await this.collectionRepo.getAllCollections(pageIndex, pageSize);
+
+      return ResponseDto.response(
+        ErrorMap.SUCCESSFUL,
+        response
+      );
     } catch (error) {
       return ResponseDto.responseError(CollectionService.name, error);
     }
