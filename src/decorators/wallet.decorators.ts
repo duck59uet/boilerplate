@@ -13,7 +13,7 @@ export const signMessage =
     // nonce: string,
   ) => {
     try {
-      const message = `APTOS\\nmessage: ${owner}${name}${symbol}${logo_uri}${project_uri}\\nnonce: 0`;
+      const message = `APTOS\\nmessage: @${owner}${name}${symbol}${logo_uri}${project_uri}\\nnonce: 0`;
       const edPk = new Ed25519PrivateKey(
         new HexString(privateKeyVerifier).toString(),
       );
