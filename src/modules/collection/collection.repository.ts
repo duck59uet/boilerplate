@@ -10,7 +10,7 @@ export class CollectionRepository {
 
     constructor(
         @InjectRepository(Collection)
-        private readonly repo: Repository<Collection>,
+        public repo: Repository<Collection>,
     ) {
         this.logger.log(
             '============== Constructor Collection Repository ==============',

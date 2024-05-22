@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Query } from '@nestjs/common';
+import { Body, Controller, Logger, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
   CONTROLLER_CONSTANTS,
@@ -10,6 +10,7 @@ import { CollectionService } from './collection.service';
 import { CreateCollectionDto } from './dto/create-collection.request';
 import { query } from 'express';
 import { GetAllCollectionRequestDto } from './dto/get-all-collection.req';
+import { GetCollectionPathParamsDto } from './dto/get-collection.request';
 
 @Controller(CONTROLLER_CONSTANTS.COLLECTION)
 @ApiTags(CONTROLLER_CONSTANTS.COLLECTION)
@@ -46,5 +47,20 @@ export class CollectionController {
   async getCollection(@Query() query: GetAllCollectionRequestDto) {
     this.logger.log('========== Get all collection ==========');
     return this.collectionService.getCollections(query);
+  }
+
+  @CommonGet({
+    url: URL_CONSTANTS.GET_COLLECTION_ID,
+    summary: 'Get collection by id',
+    apiOkResponseOptions: {
+      status: 200,
+      type: ResponseDto,
+      description: 'Get collection by id',
+      schema: {},
+    },
+  })
+  async getCollectionDetail(@Param() param: GetCollectionPathParamsDto) {
+    this.logger.log('========== Get collection detail ==========');
+    return this.collectionService.getCollectionsById(param);
   }
 }

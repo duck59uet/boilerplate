@@ -13,6 +13,7 @@ export const URL_CONSTANTS = {
   CHECK_ACCOUNT_ON_NETWORK: 'check-account-on-network',
   QUERY_MESSAGE: 'query-message',
   CREATE_COLLECTION: 'create-collection',
+  GET_COLLECTION_ID: ':id',
   CONFIRM_EXECUTE_MESSAGE: 'confirm-execute-message',
   REJECT_EXECUTE_MESSAGE: 'reject-execute-message',
   SEND_EXECUTE_MESSAGE: 'send-execute-message',

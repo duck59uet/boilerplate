@@ -10,6 +10,7 @@ import { SignatureResponseDto } from './response/signArray.response';
 import { aw } from '@aptos-labs/ts-sdk/dist/common/accountAddress-csDQ8Gnp';
 import { CommonUtil } from '../../utils/common.util';
 import { GetAllCollectionRequestDto } from './dto/get-all-collection.req';
+import { GetCollectionPathParamsDto } from './dto/get-collection.request';
 
 @Injectable()
 export class CollectionService {
@@ -49,6 +50,23 @@ export class CollectionService {
 
     try {
       const response = await this.collectionRepo.getAllCollections(pageIndex, pageSize);
+
+      return ResponseDto.response(
+        ErrorMap.SUCCESSFUL,
+        response
+      );
+    } catch (error) {
+      return ResponseDto.responseError(CollectionService.name, error);
+    }
+  }
+
+  async getCollectionsById(
+    param: GetCollectionPathParamsDto,
+  ): Promise<ResponseDto<any>> {
+    const { id } = param;
+
+    try {
+      const response = await this.collectionRepo.repo.findOne({where: { id: id }});
 
       return ResponseDto.response(
         ErrorMap.SUCCESSFUL,
