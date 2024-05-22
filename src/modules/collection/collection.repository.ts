@@ -56,4 +56,22 @@ export class CollectionRepository {
 
         return result;
     }
+
+    async getCollectionById(
+        id: string
+      ) {
+        // query transactions from aura_tx
+        // set direction of transaction
+    
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const result: unknown[] = await this.repo.query(
+          `
+          SELECT * FROM collections c
+          WHERE c.id = '${id}'
+          ORDER BY c."updatedAt" DESC;
+          `,
+        );
+
+        return result;
+    }
 }

@@ -11,6 +11,7 @@ import { aw } from '@aptos-labs/ts-sdk/dist/common/accountAddress-csDQ8Gnp';
 import { CommonUtil } from '../../utils/common.util';
 import { GetAllCollectionRequestDto } from './dto/get-all-collection.req';
 import { GetCollectionPathParamsDto } from './dto/get-collection.request';
+import { Collection } from './entities/collection.entity';
 
 @Injectable()
 export class CollectionService {
@@ -66,11 +67,11 @@ export class CollectionService {
     const { id } = param;
 
     try {
-      const response = await this.collectionRepo.repo.findOne({where: { id: id }});
+      const response = await this.collectionRepo.getCollectionById(id);
 
       return ResponseDto.response(
         ErrorMap.SUCCESSFUL,
-        response
+        plainToInstance(Collection, response)
       );
     } catch (error) {
       return ResponseDto.responseError(CollectionService.name, error);
