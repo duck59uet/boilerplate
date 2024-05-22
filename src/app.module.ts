@@ -12,6 +12,8 @@ import { CustomConfigService } from './shared/services/custom-config.service';
 import { OrderModule } from './modules/order/order.module';
 import { SystemConfigModule } from './modules/system_config/system_config.module';
 import { CollectionModule } from './modules/collection/collection.module';
+import { UploadController } from './modules/upload/upload.controller';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -50,7 +52,9 @@ import { CollectionModule } from './modules/collection/collection.module';
     OrderModule,
     SystemConfigModule,
     CollectionModule,
+    UploadModule,
   ],
   providers: [JwtStrategy],
+  controllers: [UploadController],
 })
 export class AppModule {}

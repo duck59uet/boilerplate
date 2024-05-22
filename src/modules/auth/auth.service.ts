@@ -29,11 +29,11 @@ export class AuthService {
   }
 
   async userLogIn(loginDTO: Web3LoginDTO): Promise<string> {
-    let { addr, massage, signature, publicKey } = loginDTO;
+    let { addr, message, signature, publicKey } = loginDTO;
 
     addr = standardizeAddress(addr);
 
-    if (!isValidUserSignature(addr, massage, signature, publicKey)) {
+    if (!isValidUserSignature(addr, message, signature, publicKey)) {
       throw new UnauthorizedException('Invalid Signature');
     }
 

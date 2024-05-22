@@ -8,7 +8,7 @@ export class Web3LoginDTO {
 
   @ApiProperty({ required: true })
   @IsString()
-  massage: string;
+  message: string;
 
   @ApiProperty({ required: true })
   @IsString()

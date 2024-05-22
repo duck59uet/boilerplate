@@ -2,7 +2,8 @@ export const CONTROLLER_CONSTANTS = {
   AUTH: 'auth',
   USER: 'user',
   ORDER: 'order',
-  COLLECTION: 'collection'
+  COLLECTION: 'collection',
+  UPLOAD: 'upload'
 };
 export const URL_CONSTANTS = {
   CONNECT_WALLET: 'connect_wallet',
@@ -18,5 +19,6 @@ export const URL_CONSTANTS = {
   AUTH: 'auth',
   GET_USER_BY_ADDRESS: ':address',
   GET_CONTRACT_BY_ADDRESS: ':contractAddress',
-  GET_CHART_BY_ADDRESS: ':address'
+  GET_CHART_BY_ADDRESS: ':address',
+  UPLOAD_GCP: 'image/gcp'
 };
