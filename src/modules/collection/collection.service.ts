@@ -32,7 +32,7 @@ export class CollectionService {
       const creatorAddress = authInfo.address;
 
       const { name, symbol, logo_uri, project_uri, telegram, twitter, description } = req;
-      const data = (await signMessage(this.logger)(this.privateKeyManager, name, symbol, logo_uri, project_uri)).toString();
+      const data = (await signMessage(this.logger)(creatorAddress, this.privateKeyManager, name, symbol, logo_uri, project_uri)).toString();
 
       await this.collectionRepo.createCollection(name, symbol, logo_uri, project_uri, telegram, twitter, description, creatorAddress);
 
