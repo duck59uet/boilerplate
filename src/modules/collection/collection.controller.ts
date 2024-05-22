@@ -19,7 +19,7 @@ export class CollectionController {
 
   constructor(private collectionService: CollectionService) {}
 
-  @CommonAuthPost({
+  @CommonPost({
     url: URL_CONSTANTS.CREATE_COLLECTION,
     summary: 'Create collection',
     apiOkResponseOptions: {
