@@ -7,11 +7,14 @@ import { signMessage } from '../../decorators/wallet.decorators';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
 import { SignatureResponseDto } from './response/signArray.response';
+import { aw } from '@aptos-labs/ts-sdk/dist/common/accountAddress-csDQ8Gnp';
+import { CommonUtil } from '../../utils/common.util';
 
 @Injectable()
 export class CollectionService {
   private readonly logger = new Logger(CollectionService.name);
   private readonly privateKeyManager;
+  private readonly commonUtil: CommonUtil = new CommonUtil();
 
   constructor(
     private collectionRepo: CollectionRepository,
@@ -23,9 +26,13 @@ export class CollectionService {
 
   async createCollection(req: CreateCollectionDto): Promise<ResponseDto<any>>{
     try {
+      const authInfo = this.commonUtil.getAuthInfo();
+      const creatorAddress = authInfo.address;
 
-      const { name, symbol, logo_uri, project_uri } = req;
+      const { name, symbol, logo_uri, project_uri, telegram, twitter, description } = req;
       const data = (await signMessage(this.logger)(this.privateKeyManager, name, symbol, logo_uri, project_uri)).toString();
+
+      await this.collectionRepo.createCollection(name, symbol, logo_uri, project_uri, telegram, twitter, description, creatorAddress);
 
       const signature = plainToInstance(SignatureResponseDto, data);
       return ResponseDto.response(ErrorMap.SUCCESSFUL, signature);

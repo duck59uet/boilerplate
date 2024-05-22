@@ -14,11 +14,14 @@ export class Collection extends BaseEntityAutoId {
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   owner: string;
 
   @Column({ nullable: false, name: 'projectUri' })
   project_uri: string;
+
+  @Column({ nullable: true })
+  description: string;
 
   @Column({ nullable: true })
   symbol: string;
@@ -28,4 +31,10 @@ export class Collection extends BaseEntityAutoId {
 
   @Column({ nullable: true })
   status: CollectionType;
+
+  @Column({ nullable: true })
+  twitter: string;
+
+  @Column({ nullable: true })
+  telegram: string;
 }

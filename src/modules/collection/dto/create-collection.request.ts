@@ -14,6 +14,12 @@ export class CreateCollectionDto {
   symbol: string;
 
   @ApiProperty({
+    description: 'Collection Desc',
+    type: String,
+  })
+  description: string;
+
+  @ApiProperty({
     description: 'Logo URI',
     type: String,
   })
@@ -24,4 +30,16 @@ export class CreateCollectionDto {
     type: String,
   })
   project_uri: string;
+
+  @ApiProperty({
+    description: 'Twiiter',
+    type: String,
+  })
+  twitter: string;
+
+  @ApiProperty({
+    description: 'Telegram',
+    type: String,
+  })
+  telegram: string;
 }

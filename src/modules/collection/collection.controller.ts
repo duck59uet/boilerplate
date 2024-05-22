@@ -4,7 +4,7 @@ import {
   CONTROLLER_CONSTANTS,
   URL_CONSTANTS,
 } from '../../common/constants/api.constant';
-import { CommonPost } from '../../decorators/common.decorator';
+import { CommonAuthPost, CommonPost } from '../../decorators/common.decorator';
 import { ResponseDto } from '../../common/dtos/response.dto';
 import { CollectionService } from './collection.service';
 import { CreateCollectionDto } from './dto/create-collection.request';
@@ -16,7 +16,7 @@ export class CollectionController {
 
   constructor(private collectionService: CollectionService) {}
 
-  @CommonPost({
+  @CommonAuthPost({
     url: URL_CONSTANTS.CREATE_COLLECTION,
     summary: 'Create collection',
     apiOkResponseOptions: {

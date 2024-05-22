@@ -5,6 +5,7 @@ import { RoleType } from '../../constants';
 import { Web3LoginDTO } from './dto/web3-login.dto';
 import { isValidUserSignature, standardizeAddress } from '../../decorators/wallet.decorators';
 import { UserRepository } from '../user/user.repository';
+import { ContextProvider } from '../../providers/contex.provider';
 
 @Injectable()
 export class AuthService {
@@ -48,5 +49,13 @@ export class AuthService {
       address: addr
     });
     return accessToken;
+  }
+
+  /**
+   * getAuthUser
+   * @returns
+   */
+  static getAuthUser() {
+    return ContextProvider.getAuthUser();
   }
 }

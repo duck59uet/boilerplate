@@ -1,6 +1,11 @@
 import { isNil, omitBy } from 'lodash';
 import { PathLike } from 'node:fs';
 import { FileHandle, readFile } from 'node:fs/promises';
+import { UserInfoDto } from '../modules/auth/dto';
+import { AuthService } from '../modules/auth/auth.service';
+import { CustomError } from '../common/custom-error';
+import { ErrorMap } from '../common/error.map';
+import { plainToInstance } from 'class-transformer';
 
 
 export class CommonUtil {
@@ -53,4 +58,10 @@ export class CommonUtil {
   }
 
   omitByNil = (obj: unknown) => omitBy(obj, isNil);
+
+  getAuthInfo(): UserInfoDto {
+    const currentUser = AuthService.getAuthUser();
+    if (!currentUser) throw new CustomError(ErrorMap.UNAUTHRORIZED);
+    return plainToInstance(UserInfoDto, currentUser);
+  }
 }
