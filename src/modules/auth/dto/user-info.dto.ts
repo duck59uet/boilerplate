@@ -1,5 +1,5 @@
 export class UserInfoDto {
-  id: number;
+  id: string;
 
   address: string;
 

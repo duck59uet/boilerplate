@@ -4,7 +4,7 @@ import {
   CONTROLLER_CONSTANTS,
   URL_CONSTANTS,
 } from '../../common/constants/api.constant';
-import { CommonGet } from '../../decorators/common.decorator';
+import { CommonAuthGet, CommonGet } from '../../decorators/common.decorator';
 import { ResponseDto } from '../../common/dtos/response.dto';
 import { OrderService } from './order.service';
 import { DrawChartParamDto, DrawChartQueryDto } from './dto/request/draw-chart.req';
@@ -28,7 +28,7 @@ export class OrderController {
     },
   })
   async getChart(@Param() param: DrawChartParamDto, @Query() query: DrawChartQueryDto) {
-    this.logger.log('========== Get user by address ==========');
+    this.logger.log('========== Get chart by address ==========');
     return this.orderService.drawChart(param, query);
   }
 
@@ -44,6 +44,21 @@ export class OrderController {
   })
   async getOrderHistory(@Param() param: GetOrderHistoryPathParamsDto) {
     this.logger.log('========== Get order history ==========');
+    return this.orderService.getOrderHistoryByCollection(param);
+  }
+
+  @CommonAuthGet({
+    url: URL_CONSTANTS.USER_ORDER_HISTORY,
+    summary: 'Get user order history of campaign',
+    apiOkResponseOptions: {
+      status: 200,
+      type: ResponseDto,
+      description: 'User order history',
+      schema: {},
+    },
+  })
+  async getUserOrderHistory(@Param() param: GetOrderHistoryPathParamsDto) {
+    this.logger.log('========== Get user order history ==========');
     return this.orderService.getOrderHistoryByCollection(param);
   }
 }

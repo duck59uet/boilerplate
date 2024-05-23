@@ -20,7 +20,8 @@ export const URL_CONSTANTS = {
   AUTH: 'auth',
   GET_USER_BY_ADDRESS: ':address',
   GET_CONTRACT_BY_ADDRESS: ':contractAddress',
-  GET_CHART_BY_ADDRESS: ':address',
+  GET_CHART_BY_ADDRESS: 'chart/:id',
   UPLOAD_GCP: 'image/gcp',
   ORDER_HISTORY: 'history/:id',
+  USER_ORDER_HISTORY: 'user/history/:id'
 };

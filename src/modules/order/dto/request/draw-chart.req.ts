@@ -4,10 +4,10 @@ import { IsEnum } from 'class-validator';
 
 export class DrawChartParamDto {
   @ApiProperty({
-    description: 'Collection Address',
+    description: 'Collection Id',
     type: String,
   })
-  address: string;
+  id: string;
 }
 
 export class DrawChartQueryDto {

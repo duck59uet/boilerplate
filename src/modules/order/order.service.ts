@@ -5,10 +5,12 @@ import { DrawChartParamDto, DrawChartQueryDto } from './dto/request/draw-chart.r
 import { OrderRepository } from './order.repository';
 import { GetOrderHistoryPathParamsDto } from './dto/request/get-order-collection.request';
 import { CollectionRepository } from '../collection/collection.repository';
+import { CommonUtil } from '../../utils/common.util';
 
 @Injectable()
 export class OrderService {
   private readonly logger = new Logger(OrderService.name);
+  private readonly commonUtil: CommonUtil = new CommonUtil();
 
   constructor(
     private orderRepo: OrderRepository,
@@ -21,11 +23,12 @@ export class OrderService {
     param: DrawChartParamDto,
     query: DrawChartQueryDto,
   ): Promise<ResponseDto<any>> {
-    const { address } = param;
+    const { id } = param;
     const { type } = query;
 
     try {
-      const data = await this.orderRepo.drawChart(address, type);
+      const collection = await this.collectionRepo.repo.findOne({where: {id}});
+      const data = await this.orderRepo.drawChart(collection.coin_metadata, type);
 
       return ResponseDto.response(ErrorMap.SUCCESSFUL, data);
     } catch (error) {
@@ -42,6 +45,25 @@ export class OrderService {
       const collection = await this.collectionRepo.repo.findOne({where: {id}});
 
       const data = await this.orderRepo.repo.findBy({collection: collection.coin_metadata});
+
+      return ResponseDto.response(ErrorMap.SUCCESSFUL, data);
+    } catch (error) {
+      return ResponseDto.responseError(OrderService.name, error);
+    }
+  }
+
+  async getUserOrderHistoryByCollection(
+    param: GetOrderHistoryPathParamsDto
+  ): Promise<ResponseDto<any>> {
+    const { id } = param;
+
+    try {
+      const authInfo = this.commonUtil.getAuthInfo();
+      const user_id = authInfo.id;
+
+      const collection = await this.collectionRepo.repo.findOne({where: {id}});
+
+      const data = await this.orderRepo.repo.findBy({collection: collection.coin_metadata, user_id });
 
       return ResponseDto.response(ErrorMap.SUCCESSFUL, data);
     } catch (error) {

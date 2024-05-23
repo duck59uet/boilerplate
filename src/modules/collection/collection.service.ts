@@ -10,6 +10,7 @@ import { SignatureResponseDto } from './response/signArray.response';
 import { CommonUtil } from '../../utils/common.util';
 import { GetAllCollectionRequestDto } from './dto/get-all-collection.req';
 import { GetCollectionPathParamsDto } from './dto/get-collection.request';
+import { AptosClient } from 'aptos';
 
 @Injectable()
 export class CollectionService {
@@ -66,6 +67,19 @@ export class CollectionService {
 
     try {
       const response = await this.collectionRepo.getCollectionById(id);
+
+      const aptosClient = new AptosClient(this.configService.get<string>('NODE_URL'));
+      const payload = {
+        function: `${this.configService.get<string>('MEME_CONTRACT')}::trade::get_pool_suply`,
+        type_arguments: [],
+        arguments: [response[0].coinMetadata],
+      };
+  
+      const totalSupply = await aptosClient.view(
+        payload
+      );
+
+      response[0].totalSupply = totalSupply[0];
 
       return ResponseDto.response(
         ErrorMap.SUCCESSFUL,

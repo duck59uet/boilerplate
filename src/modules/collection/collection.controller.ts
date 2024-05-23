@@ -4,11 +4,10 @@ import {
   CONTROLLER_CONSTANTS,
   URL_CONSTANTS,
 } from '../../common/constants/api.constant';
-import { CommonAuthPost, CommonGet, CommonPost } from '../../decorators/common.decorator';
+import { CommonAuthPost, CommonGet } from '../../decorators/common.decorator';
 import { ResponseDto } from '../../common/dtos/response.dto';
 import { CollectionService } from './collection.service';
 import { CreateCollectionDto } from './dto/create-collection.request';
-import { query } from 'express';
 import { GetAllCollectionRequestDto } from './dto/get-all-collection.req';
 import { GetCollectionPathParamsDto } from './dto/get-collection.request';
 
