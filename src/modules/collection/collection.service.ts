@@ -7,11 +7,9 @@ import { signMessage } from '../../decorators/wallet.decorators';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
 import { SignatureResponseDto } from './response/signArray.response';
-import { aw } from '@aptos-labs/ts-sdk/dist/common/accountAddress-csDQ8Gnp';
 import { CommonUtil } from '../../utils/common.util';
 import { GetAllCollectionRequestDto } from './dto/get-all-collection.req';
 import { GetCollectionPathParamsDto } from './dto/get-collection.request';
-import { Collection } from './entities/collection.entity';
 
 @Injectable()
 export class CollectionService {

@@ -21,5 +21,6 @@ export const URL_CONSTANTS = {
   GET_USER_BY_ADDRESS: ':address',
   GET_CONTRACT_BY_ADDRESS: ':contractAddress',
   GET_CHART_BY_ADDRESS: ':address',
-  UPLOAD_GCP: 'image/gcp'
+  UPLOAD_GCP: 'image/gcp',
+  ORDER_HISTORY: 'history/:id',
 };

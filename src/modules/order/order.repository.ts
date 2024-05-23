@@ -11,7 +11,7 @@ export class OrderRepository {
 
     constructor(
         @InjectRepository(Order)
-        private readonly repo: Repository<Order>,
+        public repo: Repository<Order>,
     ) {
         this.logger.log(
             '============== Constructor Order Repository ==============',
