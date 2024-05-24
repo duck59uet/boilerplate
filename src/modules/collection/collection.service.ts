@@ -45,7 +45,7 @@ export class CollectionService {
 
   async getCollections(
     request: GetAllCollectionRequestDto,
-  ): Promise<ResponseDto<any[]>> {
+  ): Promise<ResponseDto<any>> {
     const { pageSize, pageIndex } = request;
 
     try {

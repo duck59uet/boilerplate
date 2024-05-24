@@ -41,20 +41,26 @@ export class CollectionRepository {
         // set direction of transaction
     
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const result: unknown[] = await this.repo.query(
-          `
-          SELECT * FROM collections c
-          WHERE c.status = ${CollectionType.PUBLISH}
-          ORDER BY c."updatedAt" DESC 
-          LIMIT $1 OFFSET $2;
-          `,
-          [
-            limit,
-            offset,
-          ],
-        );
+        const [itemCount, result] = await Promise.all([
+          this.repo.createQueryBuilder('col').where(`col.status = ${CollectionType.PUBLISH}`).getCount(),
+          this.repo.query(
+            `
+            SELECT * FROM collections c
+            WHERE c.status = ${CollectionType.PUBLISH}
+            ORDER BY c."updatedAt" DESC 
+            LIMIT $1 OFFSET $2;
+            `,
+            [
+              limit,
+              offset,
+            ],
+          )
+        ]);
 
-        return result;
+        return {
+          result,
+          itemCount
+        };
     }
 
     async getCollectionById(
