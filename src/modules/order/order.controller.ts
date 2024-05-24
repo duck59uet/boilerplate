@@ -59,6 +59,6 @@ export class OrderController {
   })
   async getUserOrderHistory(@Param() param: GetOrderHistoryPathParamsDto) {
     this.logger.log('========== Get user order history ==========');
-    return this.orderService.getOrderHistoryByCollection(param);
+    return this.orderService.getUserOrderHistoryByCollection(param);
   }
 }
